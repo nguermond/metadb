@@ -72,10 +72,15 @@ let strip_root (root : root) (path : root) : rel =
 let drop_leaf (root : root) : root =
   (Str.replace_first leaf_type "" root)
 
-let get_leaf (path : rel) : name =
+  
+let get_leaf_rel (path : rel) : name =
   let names = (split path) in
   List.nth names ((List.length names) - 1)
 
+let get_leaf (root : root) : name =
+  let path = snd (unroot root) in
+  get_leaf_rel path
+  
 let hidden (path : root) : bool =
   let leaf = get_leaf (strip_root "/" path) in
   leaf.[0] = '.'

@@ -64,7 +64,10 @@ val remove_file_ext_rel : string -> rel -> rel
 val strip_root : root -> root -> rel
 
 (** [get_leaf "/some/.../path/leaf"] returns the leaf of a path, that is [leaf] *)
-val get_leaf : rel -> name
+val get_leaf : root -> name
+
+(** Same as [get_leaf] but for relative paths *)
+val get_leaf_rel : rel -> name
 
 (** [drop_leaf "/some/.../path/leaf"] will return ["/some/.../path"] *)
 val drop_leaf : root -> root
