@@ -27,6 +27,7 @@ exception LibraryExists
 
 exception InternalError
 
+exception CouldNotParse of Path.root
 
 module Path = Path
 module Hash = Hash
@@ -83,7 +84,8 @@ module Entry (D : Metadata) =
       
     let read_file (path : Path.root) : t =
       let j = Json.from_file path in
-      from_json j
+      try (from_json j) with
+        _ -> raise(CouldNotParse path)
 
     let get_data (e : t) : D.t = e.data
     let get_hash (e : t) : Hash.t = e.hash
@@ -511,3 +513,23 @@ module Make (D : Metadata) (LD : LibData) =
       L.to_string library (List.assoc library !libraries)
   end
 
+(* module type Migrator =
+ * sig
+ *   module Old_D : Metadata
+ *   module New_D : Metadata
+ *   module Old_LD : LibData
+ *   module New_LD : LibData
+ *        
+ *   val migrate_metadata : Old_D.t -> New_D.t
+ * 
+ *   val migrate_libdata : Old_LD.t -> New_LD.t
+ * end
+ *                   
+ * module Migrate (M : Migrator) =
+ * struct
+ *   let migrate_library : library:string -> unit =
+ *     failwith "NYI"
+ * 
+ *   let migrate_libraries : unit =
+ *     failwith "NYI"
+ * end *)

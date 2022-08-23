@@ -29,6 +29,7 @@ exception EntryExists of (string * Path.rel)
 exception EntryDoesNotExist of (string * Path.rel)
 exception DirNotEmpty of Path.root 
 exception LibraryExists
+exception CouldNotParse of Path.root
 
 
 module Path : module type of Path
@@ -187,3 +188,23 @@ module Make : functor (D : Metadata) (LD : LibData) ->
     val library_to_string : library:string -> string
   end
 
+
+(* module type Migrator :=
+ * sig
+ *   module Old_D : Metadata
+ *   module New_D : Metadata
+ *   module Old_LD : LibData
+ *   module New_LD : LibData
+ *        
+ *   val migrate_metadata : Old_D.t -> New_D.t
+ * 
+ *   val migrate_libdata : Old_LD.t -> New_LD.t
+ * end
+ * 
+ * 
+ * module Migrate : functor (M : Migrator) ->
+ * sig  
+ *   val migrate_library : library:string -> unit
+ * 
+ *   val migrate_libraries : unit
+ * end *)
