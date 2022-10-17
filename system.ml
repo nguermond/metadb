@@ -88,13 +88,6 @@ let make_dirp_leaf (root : Path.root) : unit =
 
 let move (path : Path.root) (new_path : Path.root) : unit =
   FileUtil.mv (Path.string_of_root path) (Path.string_of_root new_path)
-  
-(* TODO: Rewrite this using POSIX syscalls (ie. using rename) *)
-let move (path : Path.root) (new_path : Path.root) : unit =
-  (if (Sys.command ("mv \""^(Path.string_of_root path)^"\" \""
-                    ^(Path.string_of_root new_path)^"\"")) > 0 then
-     (raise (OSError ("Could not move: "^(Path.string_of_root path)
-                      ^" -> "^(Path.string_of_root new_path)))))
     
 let file_exists (path : Path.root) : bool =
   Sys.file_exists (Path.string_of_root path)
