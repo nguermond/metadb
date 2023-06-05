@@ -4,6 +4,7 @@
   
  (libraries
    yojson
+   ;;fpath
    fileutils)
  (modules
    path

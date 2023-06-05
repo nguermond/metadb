@@ -20,12 +20,15 @@
 exception InvalidRootType of string
 exception InvalidRelType of string
 exception InvalidNameType of string
+                           
+(* module P = FileUtil.DefaultPath : FileUtil.PATH_STRING_SPECIFICATION *)
+
 
 type root = string
 type rel = string
 type name = string
 
-(* TODO: Look at the Fpath library & Fileutils *)
+(* TODO: Look at the Fpath library *)
 
 
 let debug = ref true

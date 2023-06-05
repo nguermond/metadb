@@ -18,6 +18,7 @@
 (******************************************************************************)
 
 exception FileExists of Path.root
+exception CouldNotRename of Path.root
 exception EntryExists of (string * Path.rel)
 exception EntryDoesNotExist of (string * Path.rel)
 
@@ -318,8 +319,26 @@ module Make (D : Metadata) (LD : LibData) =
 
     let remove_file ~library (key : Path.rel) : unit =
       let lib = (List.assoc library !libraries) in
-      L.remove_file lib key      
+      L.remove_file lib key
 
+    (* attempt to rename file and return new path if successful *)
+    let rename_file ~library (key : Path.rel) (new_key : Path.rel) : unit =
+      let library = (List.assoc library !libraries) in
+      let path = Path.merge (L.get_root library) key in      
+      if (L.file_exists library key) && (not (L.file_exists library new_key)) then
+        begin
+          (match L.get_entry library key with
+          | Some entry ->
+             (L.set_entry library new_key entry);
+             (L.remove_entry library key);
+          | None -> ());
+          let new_path = Path.merge (L.get_root library) new_key in
+          let _ = (System.make_dirp new_path) in
+          (System.move path new_path)
+        end
+      else
+        raise(CouldNotRename path)
+      
     let new_library ~library (root : Path.root) (libdata : LD.t) : unit =
       if (List.mem_assoc library !libraries) then
         raise (LibraryExists);

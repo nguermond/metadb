@@ -27,6 +27,7 @@
 exception FileExists of Path.root
 exception EntryExists of (string * Path.rel)
 exception EntryDoesNotExist of (string * Path.rel)
+exception CouldNotRename of Path.root
 exception DirNotEmpty of Path.root 
 exception LibraryExists
 exception CouldNotParse of Path.root
@@ -127,7 +128,10 @@ module Make : functor (D : Metadata) (LD : LibData) ->
 
     (** Remove a file from a specified library, but leave the entry *)
     val remove_file : library:string -> Path.rel -> unit
-      
+
+    (** Attempt to rename a file from a specified library to the second argument. Raises {!CouldNotRename} on failure *)
+    val rename_file : library:string -> Path.rel -> Path.rel -> unit
+
     (** Move entry and file from one library to another. 
         Raises
         - {!EntryExists} if entry already exists in [to_lib]

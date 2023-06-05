@@ -15,7 +15,7 @@ type rel
 (** A name is the name of a file or directory, which cannot contain the character ['/'] *)
 type name
 
-(** Debugging mode. Debugging mode is set to false by default. *)
+(** Check well-formedness of paths. Set to true by default. *)
 val debug : bool ref
 
 (** Constructor for creating a root path, if {!debug} is set to true, [mk_root] will check that input is well-formed. 
