@@ -6,7 +6,7 @@ exception InternalError of string
 exception NotADirectory of Path.root
                          
 (** Try to open file with the system default program. 
-    This uses the system independent {{: https://ocaml.org/p/open/latest/doc/index.html}[open] command.
+    This uses the system independent {{: https://ocaml.org/p/open/latest/doc/index.html}[open]} command.
     Raises {!OSError} upon failure *)
 val xopen : string -> unit
 

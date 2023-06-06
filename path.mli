@@ -1,6 +1,6 @@
 (** A minimal library for manipulating typed representations of paths.
- * This library is a wrapper for the {{: https://gildor478.github.io/ocaml-fileutils/} [fileutils]} library, and is therefore OS independent.
- * For example, a root path on Windows will have the form ["c:\\some\\...\\path"] instead of ["/some/.../path"], but we use the Unix convention below for convenience.
+    This library is a wrapper for the {{: https://gildor478.github.io/ocaml-fileutils/} [fileutils]} library, and is therefore OS independent.
+    For example, a root path on Windows will have the form ["c:\\some\\...\\path"] instead of ["/some/.../path"], but we use the Unix convention below for convenience.
  *)
 
 
