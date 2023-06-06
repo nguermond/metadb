@@ -15,6 +15,7 @@ depends: [
   "fileutils" {>= "0.5.3"}
   "yojson" {>= "2.0.0"}
   "ocaml" {>= "4.13.0"}
+  "open" {>= "0.2.1"}
   "odoc" {with-doc}
 ]
 build: [

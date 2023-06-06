@@ -1,10 +1,13 @@
-(** A minimal library for manipulating typed representations of paths *)
+(** A minimal library for manipulating typed representations of paths.
+ * This library is a wrapper for the {{: https://gildor478.github.io/ocaml-fileutils/} [fileutils]} library, and is therefore OS independent.
+ * For example, a root path on Windows will have the form ["c:\\some\\...\\path"] instead of ["/some/.../path"], but we use the Unix convention below for convenience.
+ *)
 
 
 exception InvalidRootType of string
 exception InvalidRelType of string
 exception InvalidNameType of string
-
+exception UnexpectedFileExtension of string
                            
 (** A root path has the form ["/some/.../path"] *)
 type root
@@ -16,17 +19,17 @@ type rel
 type name
 
 (** Check well-formedness of paths. Set to true by default. *)
-val debug : bool ref
+val check : bool ref
 
-(** Constructor for creating a root path, if {!debug} is set to true, [mk_root] will check that input is well-formed. 
+(** Constructor for creating a root path, if {!check} is set to true, [mk_root] will check that input is well-formed. 
     Raise [InvalidRootType] otherwise *)
 val mk_root : string -> root
 
-(** Constructor for creating a relative path, if {!debug} is set to true, [mk_rel] will check that input is well-formed.
+(** Constructor for creating a relative path, if {!check} is set to true, [mk_rel] will check that input is well-formed.
     Raise [InvalidRelType] otherwise *)  
 val mk_rel : string -> rel
 
-(** Constructor for creating a name, if {!debug} is set to true, [mk_name] will check that input is well-formed.
+(** Constructor for creating a name, if {!check} is set to true, [mk_name] will check that input is well-formed.
     Raise [InvalidNameType] otherwise *)
 val mk_name : string -> name
 
@@ -54,7 +57,8 @@ val unroot : root -> root * rel
 (** [add_file_ext ext path] wiil add the file extension [ext] to the {{!get_leaf} leaf} of [path], that is [path'.'ext] *)
 val add_file_ext : string -> root -> root
 
-(** [remove_file_ext ext path] removes the file extension from the file name *)
+(** [remove_file_ext ext path] removes the file extension from the file name.
+    Raise [UnexpectedFileExtension] if file extension does not match *)
 val remove_file_ext : string -> root -> root
 
 (** Same as [remove_file_ext], but for relative paths *)

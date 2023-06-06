@@ -6,8 +6,8 @@ exception InternalError of string
 exception NotADirectory of Path.root
                          
 (** Try to open file with the system default program. 
-    This will try the unix command [xdg-open] followed by [open] upon failure.
-    Raises {!OSError} if both fail *)
+    This uses the system independent {{: https://ocaml.org/p/open/latest/doc/index.html}[open] command.
+    Raises {!OSError} upon failure *)
 val xopen : string -> unit
 
 (** Wrapper for {!xopen} taking {!Path.root} as input *)

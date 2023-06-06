@@ -24,11 +24,8 @@ exception NotADirectory of Path.root
 include Sys
       
 let xopen str : unit =
-  (* Linux *) 
-  if (Sys.command ("xdg-open \""^str^"\" &")) > 0 then
-    (* MacOS *)
-    (if (Sys.command ("open \""^str^"\" &")) > 0 then
-       (raise (OSError (str ^ " could not be opened!"))))
+  if not (Open.in_default_app str) then
+    raise (OSError ("Could not open "^str^"^!"))
   
 let open_file (path : Path.root) : unit =
   xopen (Path.string_of_root path)

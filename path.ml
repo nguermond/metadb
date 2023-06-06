@@ -20,90 +20,85 @@
 exception InvalidRootType of string
 exception InvalidRelType of string
 exception InvalidNameType of string
+exception UnexpectedFileExtension of string
                            
-(* module P = FileUtil.DefaultPath : FileUtil.PATH_STRING_SPECIFICATION *)
+module P = FilePath.DefaultPath
 
 
-type root = string
-type rel = string
-type name = string
+type root = P.filename
+type rel = P.filename
+type name = P.filename
 
-(* TODO: Look at the Fpath library *)
-
-
-let debug = ref true
-
-let set_debug (d : bool) : unit =
-  debug := d
+let check = ref true
           
-(* TODO: Maybe we should distinguish between files and directories? *)
-let root_type = (Str.regexp "\\(/\\|\\(/[^/]+\\)+\\)$")
-let rel_type = (Str.regexp "[^/]+\\(/[^/]+\\)*$")
-let name_type = (Str.regexp "[^/]+$")
-let leaf_type = (Str.regexp "/[^/]+$")
+let ifcheck (b : bool) : bool = (not !check) || b
        
 let mk_root (root : string) : root =
-  if ((not !debug) || Str.string_match root_type root 0) then root
+  if (ifcheck (P.is_valid root && (not (P.is_relative root)))) then root
   else raise (InvalidRootType root)
 
 let mk_rel (rel : string) : rel =
-  if ((not !debug) || Str.string_match rel_type rel 0) then rel
+  if (ifcheck (P.is_valid rel && P.is_relative rel)) then rel
   else raise (InvalidRelType rel)
 
 let mk_name (name : string) : name =
-  if ((not !debug) || Str.string_match name_type name 0) then name
+  if (ifcheck (P.is_valid name && (P.basename name = name))) then name
   else raise (InvalidNameType name)
   
-let mk_path (path : string list) : name list =
-  if !debug then (List.map mk_name path)
-  else path
+(* let mk_path (path : string list) : name list =
+ *   if !debug then (List.map mk_name path)
+ *   else path *)
 
-let unroot (root : root) : root * rel =
-  (mk_root "/", (Str.replace_first (Str.regexp "/") "" root))
-
+let rec unroot (root : root) : root * rel =
+  let dir = P.dirname root in
+  let file = P.basename root in
+  if (dir = root) then (dir,file) else
+    let (root,rel) = unroot dir in
+    (root, P.concat rel file)
+    
 let string_of_root (root : root) : string = root
 let string_of_rel (rel : rel) : string = rel
 let string_of_name (name : name) : string = name
                                      
 let merge_lst (root : root) (path : name list) : root =
-  String.concat "/" (root :: path)
+  P.make_absolute root (P.make_filename path)
 
 let merge (root : root) (path : rel) : root =
-  merge_lst root [path]
+  P.make_absolute root path
 
 let split (path : rel) : name list =
-  let names = String.split_on_char '/' path in
-  if !debug then (List.map mk_name names)
-  else names
+  let rec split_ path names =
+    let dir = P.dirname path in
+    let name = P.basename path in
+    if (dir = path) then names else
+      split_ dir (name :: names)
+  in split_ path []
 
 let add_file_ext (ext : string) (root : root) : root =
-  (root ^ "." ^ ext)
+  P.add_extension root ext
   
 let remove_file_ext_rel (ext : string) (path : rel) : rel =
-  (Str.replace_first (Str.regexp ((Str.quote ("."^ext))^"$")) "" path)
+  if (P.check_extension path ext) then
+    P.chop_extension path
+  else raise (UnexpectedFileExtension ext)
     
 let remove_file_ext (ext : string) (root : root) : root =
   remove_file_ext_rel ext root
 
 let strip_root (root : root) (path : root) : rel =
-  if root = "/" then snd (unroot path) else
-    (Str.replace_first
-       (Str.regexp ((Str.quote root)^"/")) "" path)
+  P.make_relative root path
 
 let drop_leaf (root : root) : root =
-  (Str.replace_first leaf_type "" root)
-
+  P.dirname root
   
 let get_leaf_rel (path : rel) : name =
-  let names = (split path) in
-  List.nth names ((List.length names) - 1)
+  P.basename path
 
 let get_leaf (root : root) : name =
-  let path = snd (unroot root) in
-  get_leaf_rel path
+  P.basename root
   
 let hidden (path : root) : bool =
-  let leaf = get_leaf (strip_root "/" path) in
+  let leaf = P.basename path in
   leaf.[0] = '.'
 
 let pp_root ppf (path : root) =
