@@ -24,7 +24,7 @@ exception NotADirectory of Path.root
 include Sys
       
 let xopen str : unit =
-  if not (Open.in_default_app str) then
+  if (Open.in_default_app str) then () else
     raise (OSError ("Could not open "^str^"^!"))
   
 let open_file (path : Path.root) : unit =
