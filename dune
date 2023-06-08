@@ -5,7 +5,8 @@
  (libraries
    yojson
    open
-   fileutils)
+   fileutils
+ )
  (modules
    path
    json
