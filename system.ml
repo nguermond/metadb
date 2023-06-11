@@ -64,24 +64,13 @@ let rmdir (path : Path.root) : unit =
 let remove (path : Path.root) : unit =
   Sys.remove (Path.string_of_root path)
   
-let make_dirp_rel ?(ignore_leaf=true) (root : Path.root) (path : Path.rel) : unit =
-  let rec make_dirs_ root dirs : unit =
-    (if Sys.file_exists (Path.string_of_root root) then ()
-     else (Sys.mkdir (Path.string_of_root root) 0o755));
-    match dirs with
-    | [] -> ()
-    | [name] -> (if ignore_leaf then () else
-                   (make_dirs_ (Path.merge_lst root [name]) []))
-    | dir::dirs -> make_dirs_ (Path.merge_lst root [dir]) dirs
-  in (make_dirs_ root (Path.split path))
-
 let make_dirp (root : Path.root) : unit =
-  let (root,path) = Path.unroot root in
-  make_dirp_rel root path
+  let root = Path.drop_leaf root in
+  prerr_endline ("making dir: "^(Path.string_of_root root));
+  FileUtil.mkdir ~parent:true (Path.string_of_root root)
 
 let make_dirp_leaf (root : Path.root) : unit =
-  let (root,path) = Path.unroot root in
-  make_dirp_rel ~ignore_leaf:false root path
+  FileUtil.mkdir ~parent:true (Path.string_of_root root)
 
 let move (path : Path.root) (new_path : Path.root) : unit =
   FileUtil.mv (Path.string_of_root path) (Path.string_of_root new_path)
