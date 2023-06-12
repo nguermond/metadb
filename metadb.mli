@@ -1,26 +1,29 @@
-(** [Metadb] is a library to locally store and manipulate a JSON database of file metadata. A key feature of Metadb is that a user may rename or move files within or between libraries, and Metadb will resolve missing or renamed files according to their MD5 hash. Metadb can also find duplicate files across libraries.
+(** [Metadb] is a library to locally store and manipulate a JSON database of file metadata.
+    A key feature of Metadb is that a user may rename or move files within or between libraries,
+    and Metadb will resolve missing or renamed files according to their MD5 hash. Metadb can also find duplicate files across libraries.
 
-    A database is composed of one or more libraries, each of which points to a specific directory in the [$HOME] path.
-    A library may have metadata specified by {!LibData}, such as its version of the type of its entries. 
+    A database is composed of one or more libraries, each of which points to a specific directory path.
+    A library may have metadata specified by {!LibData}, such as its version or the type of its entries. 
     Name, path, and metadata of each library is stored as JSON in a configuration file which may be read and written by {!Make.load_config} and {!Make.write_config}. 
     For example, such a file may be stored in [$HOME/.config/libraries.json].
 
     Each library assigns a JSON file to each file in its associated directory, 
-    for example, consider a library named "documents" that points to a directory [~/Documents/Articles]
+    for example, consider a library named "Library1" that points to a directory [~/Documents/Library1]
     and suppose the following files are contained in this library:
 
-    [~/Documents/Articles/]
-    - [article1.pdf]
-    - [article2.djvu]
-    - [path/to/article3.pdf]
+    [~/Documents/Library1/]
+    - [file1.pdf]
+    - [file2.djvu]
+    - [path/to/file3.pdf]
 
     Then [Metadb] will store metadata for each file specified by {!Metadata} in a hidden directory [./.metadata]:
-    [~/Documents/Articles/.metadata]
-    - [article1.pdf.json]
-    - [article2.djvu.json]
-    - [path/to/article3.pdf.json]
+    [~/Documents/Library1/.metadata]
+    - [file1.pdf.json]
+    - [file2.djvu.json]
+    - [path/to/file3.pdf.json]
 
     The key to an entry or file in a library is always given by its {{!Path.rel} relative path} with respect to the library's {{!Make.get_library_root} root path}.
+    Note that although we use Unix notation for paths, this library is OS independent.
  *)
 
 
