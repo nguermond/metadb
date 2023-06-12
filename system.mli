@@ -30,12 +30,14 @@ val rmdir : Path.root -> unit
 (** Remove a file. Raises [Sys.Sys_error] if file is a directory or does not exist *)
 val remove : Path.root -> unit
 
-(** Recursively create directories but ignore the {{!Path.get_leaf} leaf}.
-    For example, [make_dirp "/path/to/file.txt"] creates the directories "/path" and "/path/to" if they do not exist. *)
-val make_dirp : Path.root -> unit
-
-(** Same as {!make_dirp} but creates a directory for the leaf *)
+(** This is a wrapper for the {{: https://gildor478.github.io/ocaml-fileutils/} [fileutils]} library `mkdir -p` command.
+    This creates a directory for the {{!Path.get_leaf} leaf} of the input path.
+    For example, [make_dirp_leaf "/path/to/dir"] creates the directories "/path", "/path/to", and "/path/to/dir" if they do not exist. *)
 val make_dirp_leaf : Path.root -> unit
+
+(** Same as {!make_dirp_leaf} but drops the {{!Path.get_leaf} leaf} from the input path.
+    For example, [make_dirp "/path/to/file"] creates the directories "/path" and "/path/to" if they do not exist. *)
+val make_dirp : Path.root -> unit
 
 (** This is a wrapper for the {{: https://gildor478.github.io/ocaml-fileutils/} [fileutils]} library move command *)
 val move : Path.root -> Path.root -> unit

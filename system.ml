@@ -66,7 +66,6 @@ let remove (path : Path.root) : unit =
   
 let make_dirp (root : Path.root) : unit =
   let root = Path.drop_leaf root in
-  prerr_endline ("making dir: "^(Path.string_of_root root));
   FileUtil.mkdir ~parent:true (Path.string_of_root root)
 
 let make_dirp_leaf (root : Path.root) : unit =
